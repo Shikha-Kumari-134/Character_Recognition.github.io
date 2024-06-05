@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Character Recognition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-btn, .recognize-btn {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        .upload-btn:hover, .recognize-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #uploaded-image {
+            max-width: 100%;
+            margin-top: 20px;
+            display: none;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Handwritten Character Recognition</h1>
+        <label for="image-upload" class="upload-btn">Upload Image</label>
+        <input type="file" id="image-upload" accept="image/*">
+        <button class="recognize-btn" id="recognize-btn">Recognize</button>
+        <img id="uploaded-image" src="#" alt="Uploaded Image">
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('image-upload').addEventListener('change', function(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const img = document.getElementById('uploaded-image');
+                img.src = reader.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        document.getElementById('recognize-btn').addEventListener('click', function() {
+            const img = document.getElementById('uploaded-image');
+            if (img.src) {
+                const formData = new FormData();
+                formData.append('image', document.getElementById('image-upload').files[0]);
+
+                fetch('/api/recognize', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = 'Recognized Character: ' + data.character;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert('Please upload an image first.');
+            }
+        });
+    </script>
+</body>
+</html>
