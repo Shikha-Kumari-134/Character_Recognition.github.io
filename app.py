@@ -4,8 +4,11 @@ import numpy as np
 import cv2
 from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all origins
+
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
